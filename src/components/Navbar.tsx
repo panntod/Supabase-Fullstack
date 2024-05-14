@@ -19,7 +19,7 @@ async function Navbar() {
                                     <Link className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" href="/">Home</Link>
                                     <Link className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" href="/todo">CRUD</Link>
                                     <form action={handleLogout}>
-                                        <Button className="bg-red-500 hover:bg-red-600">Logout</Button>
+                                        <Button className="bg-red-500 hover:bg-red-600 hover:scale-105">Logout</Button>
                                     </form>
                                 </>
                             ) : (
