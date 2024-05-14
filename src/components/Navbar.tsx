@@ -14,7 +14,7 @@ async function Navbar() {
                     </div>
                     <div className="hidden md:block">
                         <div className="ml-10 flex items-baseline space-x-4">
-                            {data ? (
+                            {data.session ? (
                                 <>
                                     <Link className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" href="/">Home</Link>
                                     <Link className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" href="/todo">CRUD</Link>

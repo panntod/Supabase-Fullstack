@@ -18,7 +18,7 @@ import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { signUpWithEmailAndPassword } from "../actions";
-import { useFormStatus } from "react-dom";
+import { useTransition } from "react";
 
 const FormSchema = z
 	.object({
@@ -36,7 +36,7 @@ const FormSchema = z
 	});
 
 export default function RegisterForm() {
-	const { pending } = useFormStatus()
+	const [isPending, startPending] = useTransition()
 
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
@@ -47,37 +47,36 @@ export default function RegisterForm() {
 		},
 	});
 
-	async function onSubmit(data: z.infer<typeof FormSchema>) {
+	function onSubmit(data: z.infer<typeof FormSchema>) {
+		startPending(async () => {
+			const result = await signUpWithEmailAndPassword(data)
+			const { error } = JSON.parse(result)
 
-		const result = await signUpWithEmailAndPassword(data)
-
-		const { error } = JSON.parse(result)
-
-		if (error?.message) {
-			toast({
-				variant: "destructive",
-				title: "You submitted the following values:",
-				description: (
-					<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-						<code className="text-white">
-							{error.message}
-						</code>
-					</pre>
-				),
-			});
-		} else {
-			toast({
-				title: "You submitted the following values:",
-				description: (
-					<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-						<code className="text-white">
-							Successfully Register
-						</code>
-					</pre>
-				),
-			});
-		}
-
+			if (error?.message) {
+				toast({
+					variant: "destructive",
+					title: "You submitted the following values:",
+					description: (
+						<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+							<code className="text-white">
+								{error.message}
+							</code>
+						</pre>
+					),
+				});
+			} else {
+				toast({
+					title: "You submitted the following values:",
+					description: (
+						<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+							<code className="text-white">
+								Successfully Register
+							</code>
+						</pre>
+					),
+				});
+			}
+		})
 	}
 
 	return (
@@ -143,7 +142,7 @@ export default function RegisterForm() {
 					)}
 				/>
 				<Button type="submit" className="w-full flex gap-2">
-					Register {pending && <AiOutlineLoading3Quarters className={cn("animate-spin")} />}
+					Register <AiOutlineLoading3Quarters className={cn("animate-spin", { hidden: !isPending })} />
 				</Button>
 			</form>
 		</Form>
