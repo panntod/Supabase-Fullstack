@@ -38,28 +38,27 @@ export default function SignInForm() {
 	function onSubmit(data: z.infer<typeof FormSchema>) {
 		startPending(async () => {
 			const result = await signInWithEmailAndPassword(data)
-
 			const { error } = JSON.parse(result)
 
-			if (error?.message) {
-				toast({
-					variant: "destructive",
-					title: "You submitted the following values:",
-					description: (
-						<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-							<code className="text-white">
-								{error.message}
-							</code>
-						</pre>
-					),
-				});
-			} else {
+			if (!error) {
 				toast({
 					title: "You submitted the following values:",
 					description: (
 						<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
 							<code className="text-white">
 								Successfully Login
+							</code>
+						</pre>
+					),
+				});
+			} else {
+				toast({
+					variant: "destructive",
+					title: "You submitted the following values:",
+					description: (
+						<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+							<code className="text-white">
+								{error?.message || "Incorrect Email or Password"} 
 							</code>
 						</pre>
 					),
