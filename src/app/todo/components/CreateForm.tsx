@@ -18,6 +18,7 @@ import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { useTransition } from "react";
 import { cn } from "@/lib/utils";
+import { createTodo } from "../actions";
 
 const FormSchema = z.object({
 	title: z.string().min(1, {
@@ -36,15 +37,22 @@ export default function CreateForm() {
 	});
 
 	function onSubmit(data: z.infer<typeof FormSchema>) {
-		toast({
-			title: "You are successfully create todo.",
-			description: (
-				<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-					<code className="text-white">{data.title} is created</code>
-				</pre>
-			),
-		});
-		form.reset();
+		startTransition(async () => {
+			const result = await createTodo(data.title)
+			const { error } = JSON.parse(result)
+			if (!error?.message) {
+				toast({
+					title: "You are successfully create todo.",
+					description: (
+						<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+							<code className="text-white">{data.title} is created</code>
+						</pre>
+					),
+				});
+				form.reset();
+			}
+
+		})
 	}
 
 	return (
@@ -73,7 +81,7 @@ export default function CreateForm() {
 
 				<Button type="submit" className="w-full flex gap-2">
 					Create
-					<AiOutlineLoading3Quarters className={cn("animate-spin")} />
+					<AiOutlineLoading3Quarters className={cn("animate-spin", { hidden: !isPending })} />
 				</Button>
 			</form>
 		</Form>
