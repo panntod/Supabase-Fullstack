@@ -32,5 +32,5 @@ export async function GET(request: Request) {
     if (!error) NextResponse.redirect(requestUrl.origin + "/todo");
   }
 
-  return NextResponse.redirect("/auth/auth-code-error");
+  return NextResponse.redirect("/auth");
 }
